@@ -62,7 +62,7 @@ func (q *QUIC) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (
 			ctx = ot.ContextWithSpan(ctx, child)
 		}
 
-		ret, err = proxy.query(ctx, r)
+		ret, err = proxy.queryQUIC(ctx, r)
 		if err != nil {
 			// Continue with the next proxy
 			continue
@@ -136,5 +136,5 @@ const defaultTimeout = 5 * time.Second
 
 var (
 	// ErrNoHealthy means no healthy proxies left.
-	ErrNoHealthy = errors.New("no healthy gRPC proxies")
+	ErrNoHealthy = errors.New("no healthy QUIC proxies")
 )

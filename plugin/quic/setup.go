@@ -85,7 +85,7 @@ func parseStanza(c *caddy.Controller) (*QUIC, error) {
 		q.tlsConfig.ServerName = q.tlsServerName
 	}
 	for _, host := range toHosts {
-		pr, err := newProxy(host, q.tlsConfig)
+		pr, err := newProxy(host, q.tlsServerName, q.tlsConfig)
 		if err != nil {
 			return nil, err
 		}
