@@ -64,7 +64,7 @@ func (q *QUIC) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (
 			ctx = ot.ContextWithSpan(ctx, child)
 		}
 
-		ret, err = proxy.queryQUIC(ctx, r)
+		ret, err = proxy.query(ctx, r)
 		if err != nil {
 			// Continue with the next proxy
 			continue
@@ -97,8 +97,8 @@ func (q *QUIC) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (
 	return dns.RcodeServerFailure, ErrNoHealthy
 }
 
-// NewGRPC returns a new GRPC.
-func newQUIC() *QUIC {
+// NewQUIC returns a new QUIC.
+func NewQUIC() *QUIC {
 	return &QUIC{
 		p: new(random),
 	}

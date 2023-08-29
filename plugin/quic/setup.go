@@ -51,7 +51,7 @@ func parseQUIC(c *caddy.Controller) (*QUIC, error) {
 }
 
 func parseStanza(c *caddy.Controller) (*QUIC, error) {
-	q := newQUIC()
+	q := NewQUIC()
 
 	if !c.Args(&q.from) {
 		return q, c.ArgErr()
