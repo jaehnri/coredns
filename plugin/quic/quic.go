@@ -50,8 +50,7 @@ func (q *QUIC) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (
 		if i >= len(list) {
 			// reached the end of list without any answer
 			if ret != nil {
-				// write empty response and finish
-				w.WriteMsg(ret)
+				return dns.RcodeServerFailure, ErrNoAnswer
 			}
 			break
 		}
@@ -139,4 +138,7 @@ const defaultTimeout = 5 * time.Second
 var (
 	// ErrNoHealthy means no healthy proxies left.
 	ErrNoHealthy = errors.New("no healthy QUIC proxies")
+
+	// ErrNoAnswer means no proxy responded
+	ErrNoAnswer = errors.New("no answer from QUIC proxies")
 )
