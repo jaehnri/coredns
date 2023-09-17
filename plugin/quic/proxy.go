@@ -34,10 +34,9 @@ type Proxy struct {
 }
 
 // newProxy returns a new Proxy.
-func newProxy(addr string, tlsServerName string, tlsConfig *tls.Config) (*Proxy, error) {
+func newProxy(addr string, tlsConfig *tls.Config) *Proxy {
 	if tlsConfig != nil {
 		tlsConfig.NextProtos = []string{"doq"}
-		tlsConfig.ServerName = tlsServerName
 	}
 
 	quicConfig := &quic.Config{
@@ -50,7 +49,7 @@ func newProxy(addr string, tlsServerName string, tlsConfig *tls.Config) (*Proxy,
 		addr:       addr,
 		tlsConfig:  tlsConfig,
 		quicConfig: quicConfig,
-	}, nil
+	}
 }
 
 // query is a wrapper around queryQUIC that retries on expected errors.
