@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"strconv"
 	"sync"
 	"time"
 
@@ -65,6 +66,8 @@ func (p *Proxy) query(ctx context.Context, req *dns.Msg) (*dns.Msg, error) {
 
 // queryQUIC performs a call to the DoQ proxy.
 func (p *Proxy) queryQUIC(ctx context.Context, req *dns.Msg) (*dns.Msg, error) {
+	start := time.Now()
+
 	// In DoQ, one query consumes one stream.
 	// The client MUST select the next available client-initiated bidirectional
 	// stream for each subsequent query on a QUIC connection.
@@ -107,11 +110,20 @@ func (p *Proxy) queryQUIC(ctx context.Context, req *dns.Msg) (*dns.Msg, error) {
 	// Restore the original message ID to avoid breaking compatibility
 	// with other DNS protocols used in the server.
 	reply.Id = id
+
+	rc, ok := dns.RcodeToString[reply.Rcode]
+	if !ok {
+		rc = strconv.Itoa(reply.Rcode)
+	}
+
+	RequestCount.WithLabelValues(p.addr).Add(1)
+	RcodeCount.WithLabelValues(rc, p.addr).Add(1)
+	RequestDuration.WithLabelValues(p.addr).Observe(time.Since(start).Seconds())
 	return &reply, nil
 }
 
 // getConnection safely gets the current connection to the Proxy.
-// It's also responsible for forcing the reconnection when asked to.
+// It's also responsible for forcing the reconnection when asked.
 func (p *Proxy) getConnection(forceReconnect bool) error {
 	p.m.RLock()
 	conn := p.conn

@@ -14,7 +14,7 @@ import (
 func init() { plugin.Register("quic", setup) }
 
 func setup(c *caddy.Controller) error {
-	q, err := parseQUIC(c)
+	q, err := ParseQUIC(c)
 	if err != nil {
 		return plugin.Error("quic", err)
 	}
@@ -31,7 +31,7 @@ func setup(c *caddy.Controller) error {
 	return nil
 }
 
-func parseQUIC(c *caddy.Controller) (*QUIC, error) {
+func ParseQUIC(c *caddy.Controller) (*QUIC, error) {
 	var (
 		q   *QUIC
 		err error
@@ -78,12 +78,16 @@ func parseStanza(c *caddy.Controller) (*QUIC, error) {
 		}
 	}
 
-	if q.tlsServerName != "" {
-		if q.tlsConfig == nil {
-			q.tlsConfig = new(tls.Config)
-		}
-		q.tlsConfig.ServerName = q.tlsServerName
+	if q.tlsConfig == nil {
+		q.tlsConfig = new(tls.Config)
 	}
+
+	if q.tlsServerName != "" {
+		q.tlsConfig.ServerName = q.tlsServerName
+	} else {
+		q.tlsConfig.InsecureSkipVerify = true
+	}
+
 	for _, host := range toHosts {
 		pr := newProxy(host, q.tlsConfig)
 		if err != nil {

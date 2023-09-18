@@ -36,7 +36,7 @@ func TestSetup(t *testing.T) {
 
 	for i, test := range tests {
 		c := caddy.NewTestController("quic", test.input)
-		g, err := parseQUIC(c)
+		g, err := ParseQUIC(c)
 
 		if test.shouldErr && err == nil {
 			t.Errorf("Test %d: expected error but found %s for input %s", i, err, test.input)
@@ -82,7 +82,7 @@ tls
 
 	for i, test := range tests {
 		c := caddy.NewTestController("dns", test.input)
-		g, err := parseQUIC(c)
+		g, err := ParseQUIC(c)
 
 		if test.shouldErr && err == nil {
 			t.Errorf("Test %d: expected error but found %s for input %s", i, err, test.input)
@@ -125,7 +125,7 @@ nameserver 10.10.255.253`), 0666); err != nil {
 
 	for i, test := range tests {
 		c := caddy.NewTestController("quic", test.input)
-		f, err := parseQUIC(c)
+		f, err := ParseQUIC(c)
 
 		if test.shouldErr && err == nil {
 			t.Errorf("Test %d: expected error but found %s for input %s", i, err, test.input)
